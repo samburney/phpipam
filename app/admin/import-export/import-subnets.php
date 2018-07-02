@@ -45,7 +45,8 @@ foreach ($data as &$cdata) {
 						"vrfId"=>$cdata['vrfId'],
 						"masterSubnetId"=>$cdata['masterSubnetId'],
 						"permissions"=>$cdata['permissions'],
-						"isFolder"=>0
+						"isFolder"=>0,
+						"DNSrecursive"=>1,
 						);
 
 		# add custom fields
@@ -57,6 +58,32 @@ foreach ($data as &$cdata) {
 
 		# update
 		$cdata['result'] = $Admin->object_modify("subnets", $cdata['action'], "id", $values);
+
+		# powerDNS
+		if ($User->settings->enablePowerDNS==1) {
+			# powerDNS class
+			$PowerDNS = new PowerDNS ($Database);
+			if($PowerDNS->db_check()===false) { $Result->show("danger", _("Cannot connect to powerDNS database"), true); }
+			// set zone
+			$zone = $cdata['action']=="add" ? $PowerDNS->get_ptr_zone_name ($cdata['subnet'], $values['mask']) : $PowerDNS->get_ptr_zone_name ($old_subnet_details->ip, $old_subnet_details->mask);
+			
+			// try to fetch domain
+			$domain = $PowerDNS->fetch_domain_by_name ($zone);
+
+			//create
+			if ($cdata['action'] == "add") {
+				// if zone exists do nothing, otherwise create zone
+				if ($domain===false) {
+					// use default values
+					$values = json_decode($User->settings->powerDNS, true);
+					$values['name'] = $zone;
+					// create domain
+					$PowerDNS->domain_edit ("add", array("name"=>$zone,"type"=>"NATIVE"));
+					// create default records
+					$PowerDNS->create_default_records ($values);
+				}
+			}
+		}
 
 		if ($cdata['result']) {
 			$trc = $colors[$cdata['action']];

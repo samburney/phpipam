@@ -447,22 +447,7 @@ else {
 
 		//delete
 		if ($_POST['action']=="delete") {
-			// if zone exists
-			if ($domain!==false) {
-				print "<hr><p class='hidden alert-danger'></p>";
-				print "<div class='alert alert-warning'>";
-
-				print "	<div class='btn-group pull-right'>";
-				print "	<a class='btn btn-danger btn-xs' id='editDomainSubmit'>"._('Yes')."</a>";
-				print "	<a class='btn btn-default btn-xs hidePopupsReload'>"._('No')."</a>";
-				print "	</div>";
-
-				print _('Do you wish to delete DNS zone and all records')."?<br>";
-				print "	&nbsp;&nbsp; DNS zone <strong>$domain->name</strong></li>";
-				print " <form name='domainEdit' id='domainEdit'><input type='hidden' name='action' value='delete'><input type='hidden' name='id' value='$domain->id'><input type='hidden' name='csrf_cookie' value='$csrf'></form>";
-				print "	<div class='domain-edit-result'></div>";
-				print "</div>";
-			}
+			// Does nothing
 		}
 		//create
 		elseif ($_POST['action']=="add" && @$_POST['DNSrecursive']=="1") {
@@ -479,24 +464,8 @@ else {
 		}
 		// update
 		elseif ($_POST['action']=="edit" && $_POST['DNSrecursive']!=$old_subnet_details->DNSrecursive) {
-			// remove domain
-			if (!isset($_POST['DNSrecursive']) && $domain!==false) {
-				print "<hr><p class='hidden alert-danger'></p>";
-				print "<div class='alert alert-warning'>";
-
-				print "	<div class='btn-group pull-right'>";
-				print "	<a class='btn btn-danger btn-xs' id='editDomainSubmit'>"._('Yes')."</a>";
-				print "	<a class='btn btn-default btn-xs hidePopupsReload'>"._('No')."</a>";
-				print "	</div>";
-
-				print _('Do you wish to delete DNS zone and all records')."?<br>";
-				print "	&nbsp;&nbsp; DNS zone <strong>$domain->name</strong></li>";
-				print " <form name='domainEdit' id='domainEdit'><input type='hidden' name='action' value='delete'><input type='hidden' name='id' value='$domain->id'><input type='hidden' name='csrf_cookie' value='$csrf'></form>";
-				print "	<div class='domain-edit-result'></div>";
-				print "</div>";
-			}
 			// create domain
-			elseif (isset($_POST['DNSrecursive']) && $domain===false) {
+			if (isset($_POST['DNSrecursive']) && $domain===false) {
 				// use default values
 				$values = json_decode($User->settings->powerDNS, true);
 				$values['name'] = $zone;
