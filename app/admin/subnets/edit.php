@@ -565,7 +565,13 @@ $("input[name='subnet']").change(function() {
 
 		//autocreate reverse records
 		if($User->settings->enablePowerDNS==1) {
-		$checked = @$subnet_old_details['DNSrecursive']==1 ? "checked": "";
+		
+		if(isset($subnet_old_details['DNSrecursive'])) {
+			$checked = @$subnet_old_details['DNSrecursive']==1 ? "checked": "";
+		}
+		else {
+			$checked = "checked";
+		}
 		print '<tr>' . "\n";
         print '	<td>'._('Autocreate reverse records').'</td>' . "\n";
         print '	<td>' . "\n";
