@@ -80,7 +80,7 @@ foreach ($data as &$cdata) {
 					// create domain
 					$PowerDNS->domain_edit ("add", array("name"=>$zone,"type"=>"NATIVE"));
 					// create default records
-					$PowerDNS->create_default_records ($values);
+					$PowerDNS->create_default_records ($values, false, false);
 				}
 			}
 		}
