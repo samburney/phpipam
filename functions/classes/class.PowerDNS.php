@@ -1057,7 +1057,7 @@ class PowerDNS extends Common_functions {
      * @param bool $checkOnly
      * @return void
      */
-    public function create_default_records ($values, $checkOnly = false) {
+    public function create_default_records ($values, $checkOnly = false, $print_error = true) {
         // get last id
         $this->lastId = $checkOnly ? 0 : $this->Database_pdns->lastInsertId ();
         // set defaults
@@ -1095,7 +1095,8 @@ class PowerDNS extends Common_functions {
             $this->add_domain_record ($r, false);
         }
         // all good, print it !
-        $this->Result->show("success", "Default records created", false);
+		if ($print_error && php_sapi_name()!="cli")
+            $this->Result->show("success", "Default records created", false);
     }
 
     /**
@@ -1463,6 +1464,20 @@ class PowerDNS extends Common_functions {
      * @return void
      */
     public function get_ptr_zone_name_v6 ($ip, $mask) {
+        // Limit mask lengths to workable values
+        if ($mask >= 64) {
+            $mask = 64;
+        }
+        else if ($mask >= 56) {
+            $mask = 56;
+        }
+        else if ($mask >= 48) {
+            $mask = 48;
+        }
+        else if ($mask >= 32) {
+            $mask = 32;
+        }
+
         $ipp = inet_pton($ip);
         $maskbin = str_repeat('1', $mask) . str_repeat('0', 128 - $mask);
         $maskhex = '';
