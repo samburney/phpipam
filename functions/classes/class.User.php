@@ -754,6 +754,7 @@ class User extends Common_functions {
     public function authenticate ($username, $password, $saml = false) {
         # first we need to check if username exists
         $this->fetch_user_details ($username);
+
         # set method type if set, otherwise presume local auth
         $this->authmethodid = strlen(@$this->user->authMethod)>0 ? $this->user->authMethod : 1;
 
@@ -811,6 +812,19 @@ class User extends Common_functions {
 
             # if not result return false
             $usert = (array) $user;
+
+            # If user does not currently exist, attempt to auth via RADIUS
+            if (!sizeof($usert)) {
+                $new_user = $this->Database->findObject("users", "username", "radius_template");
+
+                $new_user->username = $username;
+                $new_user->real_name = $username;
+                $new_email = $username . substr($new_user->email, strpos($new_user->email, '@'));
+                $new_user->email = $new_email;
+
+                $user = $new_user;
+                $usert = (array) $user;
+            }
 
             # admin?
             if($user->role == "Administrator") {

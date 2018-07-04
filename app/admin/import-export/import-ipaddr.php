@@ -62,7 +62,7 @@ foreach ($data as &$cdata) {
 		# update
 		$cdata['result'] = $Admin->object_modify("ipaddresses", $cdata['action'], "id", $values);
 		if ($User->settings->enablePowerDNS==1) {
-			$Addresses->ptr_modify ($cdata['action'], $values);
+			$Addresses->ptr_modify ($cdata['action'], $values, false);
 		}
 
 		if ($cdata['result']) {
