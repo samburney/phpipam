@@ -421,7 +421,7 @@ else {
 				$zone = "<span class='text-muted'>(domain $zone)</span> <span class='badge badge1 badge5'>".$PowerDNS->count_domain_records_by_type ($domain->id, "PTR")." records</span>";
 			}
 			else {
-				if ($User->is_admin () || $User->user->pdns=="Yes") {
+				if ($User->is_admin (false) || $User->user->pdns=="Yes") {
 				$btns[] = "<div class='btn-group'>";
 				$btns[] = "	<a class='btn btn-default btn-xs refreshPTRsubnet' data-subnetid='$subnet[id]'><i class='fa fa-refresh'></i></a>";
 				$btns[] = "</div>";
